@@ -1,27 +1,30 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
+import { HelloPanel } from "./HelloPanel";
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+export const activate = (context: vscode.ExtensionContext): void => {
+  console.log('Congratulations, your extension "coDos" is now active!');
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "coDos" is now active!');
+  context.subscriptions.push(
+    vscode.commands.registerCommand("coDos.helloWorld", () => {
+      // vscode.window.showInformationMessage("Hello World from Adi");
+      HelloPanel.createOrShow(context.extensionUri);
+    })
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand("coDos.askQuestion", async () => {
+      const answer = await vscode.window.showInformationMessage(
+        "How you doing",
+        "Fine",
+        "Bad"
+      );
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('coDos.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
+      if (answer === "Bad") {
+        vscode.window.showInformationMessage("Sorry to hear that!");
+      } else {
+        console.log({ answer });
+      }
+    })
+  );
+};
 
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from CodeToDo!');
-	});
-
-	context.subscriptions.push(disposable);
-}
-
-// this method is called when your extension is deactivated
-export function deactivate() {}
+export const deactivate = () => {};
