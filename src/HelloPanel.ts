@@ -125,7 +125,7 @@ export class HelloPanel {
   private _getHtmlForWebview(webview: vscode.Webview) {
     // And the uri we use to load this script in the webview
     const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "media", "main.js")
+      vscode.Uri.joinPath(this._extensionUri, "out/compiled", "helloWorld.js")
     );
 
     // Local path to css styles
@@ -158,8 +158,14 @@ export class HelloPanel {
 				<!--
 					Use a content security policy to only allow loading images from https or from our extension directory,
 					and only allow scripts that have a specific nonce.
-        -->
         <meta http-equiv="Content-Security-Policy" content=" img-src https: data:; style-src 'unsafe-inline' ${webview.cspSource}; script-src 'nonce-${nonce}';">
+      -->
+
+      <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; img-src ${webview.cspSource} https:; script-src ${webview.cspSource}; style-src ${webview.cspSource};"
+      />
+
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 				<link href="${styleResetPath}" rel="stylesheet">
 				<link href="${stylesMainUri}" rel="stylesheet">
@@ -168,11 +174,9 @@ export class HelloPanel {
             
         </script>
 			</head>
-            <body>
-            <h1>Hey there!!</h1>
-            <input />
-            <button>Click</button>
-            <script  src="${scriptUri}"/>
+      <body>
+            
+        <script  src="${scriptUri}"/>
 			</body>
 			</html>
             `;

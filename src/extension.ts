@@ -10,6 +10,14 @@ export const activate = (context: vscode.ExtensionContext): void => {
       HelloPanel.createOrShow(context.extensionUri);
     })
   );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("coDos.refresh", () => {
+      // vscode.window.showInformationMessage("Hello World from Adi");
+      HelloPanel.kill();
+      HelloPanel.createOrShow(context.extensionUri);
+    })
+  );
   context.subscriptions.push(
     vscode.commands.registerCommand("coDos.askQuestion", async () => {
       const answer = await vscode.window.showInformationMessage(
