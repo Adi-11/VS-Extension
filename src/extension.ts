@@ -1,8 +1,14 @@
 import * as vscode from "vscode";
 import { HelloPanel } from "./HelloPanel";
+import { SidebarProvider } from "./helper/SidebarProvider";
 
 export const activate = (context: vscode.ExtensionContext): void => {
   console.log('Congratulations, your extension "coDos" is now active!');
+
+  const sidebarProvider = new SidebarProvider(context.extensionUri);
+  context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider("coDos-sidebar", sidebarProvider)
+  );
 
   context.subscriptions.push(
     vscode.commands.registerCommand("coDos.helloWorld", () => {
@@ -16,6 +22,11 @@ export const activate = (context: vscode.ExtensionContext): void => {
       // vscode.window.showInformationMessage("Hello World from Adi");
       HelloPanel.kill();
       HelloPanel.createOrShow(context.extensionUri);
+      setTimeout(() => {
+        vscode.commands.executeCommand(
+          "workbench.action.webview.openDeveloperTools"
+        );
+      }, 1000);
     })
   );
   context.subscriptions.push(
