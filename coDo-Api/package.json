@@ -1,0 +1,21 @@
+{
+  "name": "codo-api",
+  "version": "1.0.0",
+  "description": "Backend for coDOs vscode api",
+  "main": "app.js",
+  "scripts": {
+    "watch": "tsc -w",
+    "dev": "node dist/app.js"
+  },
+  "author": "Aditya",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.11",
+    "@types/node": "^14.14.33",
+    "nodemon": "^2.0.7",
+    "typescript": "^4.2.3"
+  }
+}
