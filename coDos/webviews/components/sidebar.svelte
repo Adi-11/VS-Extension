@@ -1,77 +1,60 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import type { User } from "../types";
+  import Todos from "./Todos.svelte";
 
-  import HelloWorld from "./HelloWorld.svelte";
+  let loading = true;
+  let user: User | null = null;
+  let accessToken: any = "";
 
-  let todos: Array<{ text: string; completed: boolean }> = [];
-  let count = 0;
-  let text = "";
-
-  onMount(() => {
-    window.addEventListener("message", (event) => {
+  onMount(async () => {
+    window.addEventListener("message", async (event) => {
       const message = event.data;
       console.log({ message });
       switch (message.type) {
-        case "new-todo":
-          todos = [{ text: message.value, completed: false }, ...todos];
-          break;
+        case "get-token":
+          accessToken = message.value;
+          const response = await fetch(`${apiBaseUrl}/me`, {
+            headers: {
+              authorization: `Bearer ${accessToken}`,
+            },
+          });
+
+          const data = await response.json();
+          console.log(data);
+          user = data.user;
+          loading = false;
       }
     });
+
+    myvscode.postMessage({ type: "get-token", value: undefined });
   });
 </script>
 
-<h1>Sidebar</h1>
-<form
-  on:submit|preventDefault={(e) => {
-    todos = [{ text, completed: false }, ...todos];
-    text = "";
-  }}
->
-  <input bind:value={text} />
-</form>
+<h4>coDos</h4>
 
-<ul>
-  {#each todos as todo (todo.text)}
-    <li
-      on:click={() => {
-        todo.completed = !todo.completed;
-      }}
-      class={todo.completed ? "completed" : ""}
-    >
-      {todo.text}
-    </li>
-  {/each}
-</ul>
-
-<!-- svelte-ignore missing-declaration -->
-<button
-  on:click={() => {
-    myvscode.postMessage({
-      type: "onInfo",
-      value: "info message",
-    });
-  }}
->
-  click me
-</button>
-
-<!-- svelte-ignore missing-declaration -->
-<button
-  on:click={() => {
-    myvscode.postMessage({
-      type: "onError",
-      value: "Error message",
-    });
-  }}
->
-  click me error
-</button>
+{#if loading}
+  <div>loading....</div>
+{:else if user}
+  <Todos {user} />
+  <button
+    on:click={() => {
+      user = null;
+      accessToken = "";
+      myvscode.postMessage({ type: "logout", value: undefined });
+    }}>logout</button
+  >
+{:else}
+  <!-- svelte-ignore missing-declaration -->
+  <button
+    on:click={() => {
+      myvscode.postMessage({ type: "authenticate", value: undefined });
+    }}>Login with github</button
+  >
+{/if}
 
 <style>
-  h1 {
-    color: blue;
-  }
-  .completed {
-    text-decoration: line-through;
+  h4 {
+    color: rgba(250, 250, 250, 0.726);
   }
 </style>

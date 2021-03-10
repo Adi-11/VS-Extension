@@ -79,6 +79,33 @@ const connectDB = async () => {
       res.redirect(`http://localhost:54321/auth/${req.user.accessToken}`);
     }
   );
+  app.get("/me", async (req: any, res: any) => {
+    const authToken = req.headers.authorization;
+    if (!authToken) {
+      res.send({ user: null });
+      return;
+    }
+    const token = authToken.split(" ")[1];
+    if (!token) {
+      res.send({ user: null });
+      return;
+    }
+    let gitHubId: any = "";
+    try {
+      const payload: any = jwt.verify(token, process.env.JWT_SECRET);
+      gitHubId = payload.userId;
+    } catch (error) {
+      res.send({ user: null });
+      return;
+    }
+
+    if (!gitHubId) {
+      res.send({ user: null });
+      return;
+    }
+    const user = await User.findOne({ gitHubId });
+    res.send({ user });
+  });
   app.listen(4000, () => {
     console.log(`Server is up on http://localhost:4000`);
   });

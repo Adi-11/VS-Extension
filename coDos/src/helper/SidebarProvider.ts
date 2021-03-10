@@ -1,5 +1,8 @@
 import * as vscode from "vscode";
+import { authenticate } from "./Authenticate";
+import { apiBaseUrl } from "./Constants";
 import { getNonce } from "./GetNonce";
+import { TokenManager } from "./TokenManager";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -33,6 +36,26 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             return;
           }
           vscode.window.showErrorMessage(data.value);
+          break;
+        }
+        case "get-token": {
+          webviewView.webview.postMessage({
+            type: "get-token",
+            value: TokenManager.getToken(),
+          });
+          break;
+        }
+        case "authenticate": {
+          authenticate(() => {
+            webviewView.webview.postMessage({
+              type: "get-token",
+              value: TokenManager.getToken(),
+            });
+          });
+          break;
+        }
+        case "logout": {
+          TokenManager.setToken("");
           break;
         }
       }
@@ -69,14 +92,19 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 					Use a content security policy to only allow loading images from https or from our extension directory,
 					and only allow scripts that have a specific nonce.
         -->
-        <meta http-equiv="Content-Security-Policy" content="img-src https: data:; style-src 'unsafe-inline' ${webview.cspSource}; script-src 'nonce-${nonce}';">
+        <meta http-equiv="Content-Security-Policy" content="img-src https: data:; style-src 'unsafe-inline' ${
+          webview.cspSource
+        }; script-src 'nonce-${nonce}';">
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 				<link href="${styleResetUri}" rel="stylesheet">
 				<link href="${styleVSCodeUri}" rel="stylesheet">
         <link href="${styleMainUri}" rel="stylesheet">
 			</head>
       <body>
-        <script nonce="${nonce}">const myvscode = acquireVsCodeApi()</script>
+        <script nonce="${nonce}">
+        const myvscode = acquireVsCodeApi();
+        const apiBaseUrl = ${JSON.stringify(apiBaseUrl)};
+        </script>
 				<script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>
 			</html>`;

@@ -1,9 +1,12 @@
 import * as vscode from "vscode";
 import { HelloPanel } from "./HelloPanel";
+import { authenticate } from "./helper/Authenticate";
 import { SidebarProvider } from "./helper/SidebarProvider";
+import { TokenManager } from "./helper/TokenManager";
 
 export const activate = (context: vscode.ExtensionContext): void => {
   console.log('Congratulations, your extension "coDos" is now active!');
+  TokenManager.globalState = context.globalState;
 
   const sidebarProvider = new SidebarProvider(context.extensionUri);
   const btn = vscode.window.createStatusBarItem(
@@ -19,9 +22,23 @@ export const activate = (context: vscode.ExtensionContext): void => {
 
   context.subscriptions.push(
     vscode.commands.registerCommand("coDos.helloWorld", () => {
-      HelloPanel.createOrShow(context.extensionUri);
+      vscode.window.showInformationMessage(
+        "token is: " + TokenManager.getToken()
+      );
+      // HelloPanel.createOrShow(context.extensionUri);
     })
   );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("coDos.authenticate", () => {
+      try {
+        authenticate();
+      } catch (error) {
+        console.log(error);
+      }
+    })
+  );
+
   context.subscriptions.push(
     vscode.commands.registerCommand("coDos.addTodo", () => {
       const { activeTextEditor } = vscode.window;
