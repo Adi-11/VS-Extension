@@ -10,7 +10,6 @@
   onMount(async () => {
     window.addEventListener("message", async (event) => {
       const message = event.data;
-      console.log({ message });
       switch (message.type) {
         case "get-token":
           accessToken = message.value;
@@ -36,7 +35,8 @@
 {#if loading}
   <div>loading....</div>
 {:else if user}
-  <Todos {user} />
+  <Todos {user} {accessToken} />
+  <!-- svelte-ignore missing-declaration -->
   <button
     on:click={() => {
       user = null;
