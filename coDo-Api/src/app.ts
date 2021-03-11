@@ -1,11 +1,13 @@
 require("dotenv-safe").config();
 import express from "express";
 import cors from "cors";
-import mongoose from "mongoose";
+import mongoose, { Model } from "mongoose";
 import User from "./model/User";
 import { Strategy as GitHubStrategy } from "passport-github";
 import passport from "passport";
 import jwt from "jsonwebtoken";
+import Todo from "./model/Todo";
+import { isAuth, ReqWithUserId } from "./isAuth";
 
 const connectDB = async () => {
   try {
@@ -29,7 +31,7 @@ const connectDB = async () => {
     done(null, user.accessToken);
   });
   app.use(passport.initialize());
-
+  app.use(express.json());
   passport.use(
     new GitHubStrategy(
       {
@@ -106,6 +108,20 @@ const connectDB = async () => {
     const user = await User.findOne({ gitHubId });
     res.send({ user });
   });
+
+  app.get("/todo", isAuth, async (req: any, res: any) => {
+    const todos: any = await Todo.find({ createrId: req.UserId });
+    res.send(todos);
+  });
+
+  app.post("/todo", isAuth, async (req: ReqWithUserId, res: any) => {
+    console.log(req.body, req.UserId);
+    const todo = await (
+      await Todo.create({ text: req.body.text, createrId: req.UserId })
+    ).save();
+    res.send({ todo });
+  });
+
   app.listen(4000, () => {
     console.log(`Server is up on http://localhost:4000`);
   });
