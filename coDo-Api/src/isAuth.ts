@@ -1,7 +1,5 @@
-import { RequestHandler, Request } from "express";
+import { RequestHandler } from "express";
 import jwt from "jsonwebtoken";
-
-export type ReqWithUserId = Request<{}, any, any, {}> & { UserId: string };
 
 export const isAuth: RequestHandler<{}, any, any, {}> = (
   req: any,

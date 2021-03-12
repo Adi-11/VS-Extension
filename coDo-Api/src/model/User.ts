@@ -1,11 +1,9 @@
 import mongoose, { Schema, Document } from "mongoose";
-import Todo from "./Todo";
 
 export interface User extends Document {
   id: number;
   name: string;
   gitHubId: string;
-  todos: typeof Todo[];
 }
 
 const UserSchema: Schema = new Schema({
@@ -25,10 +23,6 @@ const UserSchema: Schema = new Schema({
     type: String,
     required: true,
     unique: true,
-  },
-  todos: {
-    type: mongoose.Schema.Types.Array,
-    ref: "Todo",
   },
 });
 

@@ -1,11 +1,21 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { bubble } from "svelte/internal";
   import type { User } from "../types";
   import Todos from "./Todos.svelte";
 
   let loading = true;
   let user: User | null = null;
   let accessToken: any = "";
+  let page: "todos" | "contact" = myvscode.getState()?.page || "todos";
+
+  /**
+   * this code block is executed every single time whenever the variables used inside this is changed
+   * kind of dependency array in @useEffect hooks(REACT)
+   */
+  $: {
+    myvscode.setState({ page });
+  }
 
   onMount(async () => {
     window.addEventListener("message", async (event) => {
@@ -35,7 +45,21 @@
 {#if loading}
   <div>loading....</div>
 {:else if user}
-  <Todos {user} {accessToken} />
+  {#if page === "todos"}
+    <Todos {user} {accessToken} />
+    <button
+      on:click={() => {
+        page = "contact";
+      }}>To to contact</button
+    >
+  {:else}
+    <div>Contact Author</div>
+    <button
+      on:click={() => {
+        page = "todos";
+      }}>go back</button
+    >
+  {/if}
   <!-- svelte-ignore missing-declaration -->
   <button
     on:click={() => {
