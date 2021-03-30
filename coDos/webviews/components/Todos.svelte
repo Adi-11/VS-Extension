@@ -3,7 +3,7 @@
   import type { User } from "../types";
   export let user: User;
   export let accessToken: string;
-  let todos: Array<{ text: string; completed: boolean; _id: string }> = [];
+  let todos: Array<{ text: string; completed: boolean; id: number }> = [];
   let text = "";
 
   onMount(async () => {
@@ -62,14 +62,14 @@
 </form>
 <!-- svelte-ignore missing-declaration -->
 <ul>
-  {#each todos as todo (todo._id)}
+  {#each todos as todo (todo.id)}
     <li
       on:click={async () => {
         todo.completed = !todo.completed;
         const response = await fetch(`${apiBaseUrl}/todo`, {
           method: "PUT",
           body: JSON.stringify({
-            id: todo._id,
+            id: todo.id,
           }),
           headers: {
             "content-type": "application/json",
