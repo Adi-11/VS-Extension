@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { User } from "./User";
+import { vsTodoUser as User } from "./User";
 
 @Entity()
 export class Todo extends BaseEntity {

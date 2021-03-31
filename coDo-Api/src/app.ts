@@ -4,7 +4,7 @@ import express from "express";
 import { createConnection } from "typeorm";
 import { __prod__ } from "./constants";
 import { join } from "path";
-import { User } from "./entities/User";
+import { vsTodoUser as User } from "./entities/User";
 import passport from "passport";
 import cors from "cors";
 import { Strategy as GitHubStrategy } from "passport-github";

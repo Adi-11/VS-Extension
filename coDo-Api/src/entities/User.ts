@@ -8,7 +8,7 @@ import {
 import { Todo } from "./Todo";
 
 @Entity()
-export class User extends BaseEntity {
+export class vsTodoUser extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
