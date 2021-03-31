@@ -16,7 +16,10 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.19",
     "passport": "^0.4.1",
-    "passport-github": "^1.1.0"
+    "passport-github": "^1.1.0",
+    "pg": "^8.5.1",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.2.32"
   },
   "devDependencies": {
     "@types/cors": "^2.8.10",
